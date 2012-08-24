@@ -12,7 +12,7 @@ var context = {						// initial context for parsing fragments
 		foaf: "http://...", 
 		...
 	},
-	base: "http://"					// optional, default is page URL
+	base: "http://..."					// optional, default is page URL
 };
 
 // use callback
