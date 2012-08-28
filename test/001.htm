@@ -22,15 +22,15 @@
 		
 		<script>
 			//<!--
+			var debug = document.getElementById('debug');
+			
 			var parser = new RDFaParser();
 			var node = document.getElementById('foo2');
 			parser.parse(node, function(s, p, o, dt, lang) {
-				console.log(s + ' // ' + p + ' // ' + o + ' // ' + dt + ' // ' + lang);
-				console.log("node");
+				debug.value += s + ' // ' + p + ' // ' + o + ' // ' + dt + ' // ' + lang + "\n";
 				console.log(this);
 			});
 			
-			//$("#debug").val(JSON.stringify(subjects));
 			//-->
 		</script>
 	</body>
