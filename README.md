@@ -4,38 +4,20 @@ Calli-RDFa
 Interface
 ---------
 
-```javascript
-var context = {						// initial context for parsing fragments
-	node: $("form#myForm")[0],		// optional, default is document node
-	prefixes: {						// optional, will walk up to root once when/iff unknown prefixes are encountered
-		rdf: "http://...", 
-		foaf: "http://...", 
-		...
-	},
-	base: "http://..."					// optional, default is page URL
-};
-
-// use callback
-
-var triples = [];
-
-var callback = function(subject, predicate, object, context) {
-	var isBlankSubject = (subject.type == "bnode");
-	var lang = object.language;
-	var datatype = object.datatype;
+    var callback = function(subject, property, value, datatype, lang) {
+		var isBlankSubject = subject.indexOf('_:') == 0;
+		var isLiteral = datatype != null;
+		var htmlElementCompletingThisTriple = this;
+	}
 	
-	triples[triples.length] = { s: subject, p: predicate, o: object };
-}
+	var node = document.documentElement;
 
-RDFa.parse(callback, context);
+	var parser = new RDFaParser();
+	parser.setPrefix("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 
-// let the lib build an index??
+	var base = null;// use node or document base
 
-var graph = RDFa.parse(context);
+	if (!parser.parse(node, callback, base)) {
+		throw 'could not parse';
+	}
 
-// parse a snippet
-var context = {
-	node: $('<div xmlsn="...">.... </div>')
-}
-var graph = RDFa.parse(context);
-```
