@@ -10,7 +10,7 @@
 		<meta charset="utf-8"/>
 		<script type="text/javascript" src="../src/calli-rdfa.js"></script>
 	</head>
-	<body id="body" xmlns:calli="http://callimachusproject.org/rdf/2009/framework#">
+	<body id="body">
 		<div id="foo" about="#foo">
 			<span property="calli:bar">baz</span>
 			<a rel="calli:test" typeof="calli:nested">test</a>
@@ -18,6 +18,12 @@
 		<div id="foo2" about="#foo2" lang="en">
 			<span property="calli:bar2">baz2</span>
 		</div>
+		
+		<div id="blank" typeof="calli:Something">
+			<a rel="license" href="http://cc.org/by">attribution</a>
+		</div>
+		
+		
 		<textarea id="debug" style="width: 90%; height: 400px"></textarea>
 		
 		<script>
@@ -25,17 +31,19 @@
 			var debug = document.getElementById('debug');
 			
 			var parser = new RDFaParser();
-			var node = document.getElementById('foo2');
-			parser.parse(node, function(s, p, o, dt, lang) {
+			parser.parse(document.getElementById('body'), function(s, p, o, dt, lang) {
 				debug.value += s + ' // ' + p + ' // ' + o + ' // ' + dt + ' // ' + lang + "\n";
 				console.log(this);
 			});
+			debug.value += "\n";
 			
+			parser = new RDFaParser();
 			parser.setPrefix('calli', 'http://example.com/schema#');
-			parser.parse(node, function(s, p, o, dt, lang) {
+			parser.parse(document.getElementById('foo2'), function(s, p, o, dt, lang) {
 				debug.value += s + ' // ' + p + ' // ' + o + ' // ' + dt + ' // ' + lang + "\n";
 				console.log(this);
 			});
+			debug.value += "\n";
 			
 			//-->
 		</script>
