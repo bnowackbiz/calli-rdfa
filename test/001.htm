@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html 
+	xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:calli="http://callimachusproject.org/rdf/2009/framework#" 
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+	<head>
+		<title>parser test</title>
+		<meta charset="utf-8"/>
+		<script type="text/javascript" src="../src/calli-rdfa.js"></script>
+	</head>
+	<body id="body" xmlns:calli="http://callimachusproject.org/rdf/2009/framework#">
+		<div id="foo" about="#foo">
+			<span property="calli:bar">baz</span>
+			<a rel="calli:test" typeof="calli:nested">test</a>
+		</div>
+		<div id="foo2" about="#foo2" lang="en">
+			<span property="calli:bar2">baz2</span>
+		</div>
+		<textarea id="debug" style="width: 90%; height: 400px"></textarea>
+		
+		<script>
+			//<!--
+			var parser = new RDFaParser();
+			var node = document.getElementById('foo2');
+			parser.parse(node, function(s, p, o, dt, lang) {
+				console.log(s + ' // ' + p + ' // ' + o + ' // ' + dt + ' // ' + lang);
+				console.log("node");
+				console.log(this);
+			});
+			
+			//$("#debug").val(JSON.stringify(subjects));
+			//-->
+		</script>
+	</body>
+	
+</html>
