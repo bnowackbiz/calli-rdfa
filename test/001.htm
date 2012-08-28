@@ -31,6 +31,12 @@
 				console.log(this);
 			});
 			
+			parser.setPrefix('calli', 'http://example.com/schema#');
+			parser.parse(node, function(s, p, o, dt, lang) {
+				debug.value += s + ' // ' + p + ' // ' + o + ' // ' + dt + ' // ' + lang + "\n";
+				console.log(this);
+			});
+			
 			//-->
 		</script>
 	</body>
