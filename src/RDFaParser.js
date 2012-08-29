@@ -1015,7 +1015,7 @@ function RDFaParser() {
 	};
 	
 	/**
-	 * Retrives the initial vocabulary context for the given node.
+	 * Retrieves the initial vocabulary context for the given node.
 	 */
 	this.getInitialVocabulary = function(node) {
 		var doc, result;
@@ -1035,7 +1035,7 @@ function RDFaParser() {
 	};
 	
 	/**
-	 * Tries to make sure that node has a baseURI property.
+	 * Tries to detect a baseURI for the given node.
 	 */
 	this.getNodeBase = function(node) {
 		// read-only property already set by browser
@@ -1060,7 +1060,7 @@ function RDFaParser() {
 	/**
 	 * Calls the callback when a new triple is extracted.
 	 */
-	this.addTriple = function(origin,subject,predicate,object) {
+	this.addTriple = function(origin, subject, predicate, object) {
 		var datatype = null;
 		var language = object.language || null;
 		if (object.type == this.PlainLiteralURI) {
