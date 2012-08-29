@@ -71,7 +71,7 @@ function RDFaParser() {
 		var SCHEME = new RegExp("^[A-Za-z][A-Za-z0-9\+\-\.]*\:");
 		var match = SCHEME.exec(uri);
 		if (!match) {
-			throw "Bad URI value, no scheme: "+uri;
+			throw "Bad URI value, no scheme: '" + uri + "'";
 		}
 		var parsed = { spec: uri };
 		parsed.scheme = match[0].substring(0,match[0].length-1);
@@ -440,7 +440,7 @@ function RDFaParser() {
 			predicate,
 			list
 		;
-		queue.push({ current: node, context: this.push(null,node.baseURI)});
+		queue.push({ current: node, context: this.push(null,this.getNodeBase(node))});
 		while (queue.length>0) {
 		  var item = queue.shift();
 		  if (item.parent) {
@@ -487,7 +487,7 @@ function RDFaParser() {
 		  var vocabulary = context.vocabulary;
 
 		  // TODO: the "base" element may be used for HTML+RDFa 1.1
-		  var base = this.parseURI(current.baseURI);
+		  var base = this.parseURI(this.getNodeBase(current));
 		  current.subject = null;
 
 		  // Sequence Step 2: set the default vocabulary
@@ -566,10 +566,10 @@ function RDFaParser() {
 			 }
 			 if (!newSubject) {
 				if (current.parentNode.nodeType==Node.DOCUMENT_NODE) {
-				   newSubject = current.baseURI;
+				   newSubject = this.getNodeBase(current);
 				} else if (context.parentObject) {
 				   // TODO: Verify: If the xml:base has been set and the parentObject is the baseURI of the parent, then the subject needs to be the new base URI
-				   newSubject = current.parentNode.baseURI==context.parentObject ? current.baseURI : context.parentObject;
+				   newSubject = this.getNodeBase(current.parentNode)==context.parentObject ? this.getNodeBase(current) : context.parentObject;
 				}
 			 }
 			 if (resourceAtt) {
@@ -600,13 +600,13 @@ function RDFaParser() {
 				}
 			 }
 			 if (!newSubject && current.parentNode.nodeType==Node.DOCUMENT_NODE) {
-				newSubject = current.baseURI;
+				newSubject = this.getNodeBase(current);
 				if (typeofAtt) {
 				   typedResource = newSubject;
 				}
 			 } else if (!newSubject && context.parentObject) {
 				// TODO: Verify: If the xml:base has been set and the parentObject is the baseURI of the parent, then the subject needs to be the new base URI
-				newSubject = current.parentNode.baseURI==context.parentObject ? current.baseURI : context.parentObject;
+				newSubject = this.getNodeBase(current.parentNode)==context.parentObject ? this.getNodeBase(current) : context.parentObject;
 			 }
 			 if (typeofAtt && !typedResource) {
 				if (resourceAtt) {
@@ -642,15 +642,15 @@ function RDFaParser() {
 				newSubject = this.resolveAndNormalize(base,srcAtt.value);
 			 }
 			 if (!newSubject) {
-				if (current.parentNode.nodeType==Node.DOCUMENT_NODE) {
-				   newSubject = current.baseURI;
+				if (current.parentNode && current.parentNode.nodeType==Node.DOCUMENT_NODE) {
+				   newSubject = this.getNodeBase(current);
 				} else if (this.inXHTMLMode && (current.localName=="head" || current.localName=="body")) {
-				   newSubject = current.parentNode.baseURI==context.parentObject ? current.baseURI : context.parentObject;
+				   newSubject = this.getNodeBase(current.parentNode)==context.parentObject ? this.getNodeBase(current) : context.parentObject;
 				} else if (typeofAtt) {
 				   newSubject = this.newBlankNode();
 				} else if (context.parentObject) {
 				   // TODO: Verify: If the xml:base has been set and the parentObject is the baseURI of the parent, then the subject needs to be the new base URI
-				   newSubject = current.parentNode.baseURI==context.parentObject ? current.baseURI : context.parentObject;
+				   newSubject = this.getNodeBase(current.parentNode)==context.parentObject ? this.getNodeBase(current) : context.parentObject;
 				   if (!propertyAtt) {
 					  skip = true;
 				   }
@@ -767,7 +767,7 @@ function RDFaParser() {
 		  // Step 11: Current property values
 		  if (propertyAtt) {
 			 // TODO: for HTML+RDFa 1.1, the datatype must be set if the content comes from the datetime attribute
-			 //alert(current.baseURI+" "+newSubject+" "+propertyAtt.value);
+			 //alert(this.getNodeBase(current)+" "+newSubject+" "+propertyAtt.value);
 			 var datatype = null;
 			 var content = null; 
 			 if (datatypeAtt) {
@@ -845,7 +845,7 @@ function RDFaParser() {
 			 childContext = this.push(context,context.subject);
 			 // TODO: should the entObject be passed along?  If not, then intermediary children will keep properties from being associated with incomplete triples.
 			 // TODO: Verify: if the current baseURI has changed and the parentObject is the parent's base URI, then the baseURI should change
-			 childContext.parentObject = current.parentNode.baseURI==context.parentObject ? current.baseURI : context.parentObject;
+			 childContext.parentObject = this.getNodeBase(current.parentNode)==context.parentObject ? this.getNodeBase(current) : context.parentObject;
 			 childContext.incomplete = context.incomplete;
 			 childContext.language = language;
 			 childContext.prefixes = prefixes;
@@ -890,27 +890,56 @@ function RDFaParser() {
 	/**
 	 * Parses a DOM node for RDFa and calls the callback function for each triple
 	 */
-	this.parse = function(node, callback, base) {
-		if (!node) {
-			node = document.documentElement;
+	this.parse = function(node, callback) {
+		// node check
+		if (!node || !node.nodeType) {
+			throw "First parameter of parse(node, callback) must be a DOM node.";
 		}
-		if (base) {
-			node.baseURI = base;
+		if (node.nodeType == Node.DOCUMENT_NODE) {
+			node = node.documentElement;
 		}
-		this.callback = callback ? callback : function(s, p, o, dt, lang) {};
-				
+		// callback check
+		if (typeof callback != "function") {
+			throw "Second parameter of parse(node, callback) must be a function.";
+		}
+		this.callback = callback;
 		try {
 			this.setContext(node);
 			this.process(node);
 			return true;
 		}
 		catch (e) {
+			if (window.console !== undefined && console.log) {
+				console.log(e);
+				console.log(e.stack);
+			}
 			return false;
 		}
 	};
+
+	/**
+	 * Returns the document object associated with the given node.
+	 */
+	this.getNodeDocument = function(node) {
+		if (node.nodeType == Node.DOCUMENT_NODE) {
+			return node;
+		}
+		else if (node.parentNode) {
+			return this.getNodeDocument(node.parentNode);
+		}
+		else if (node.ownerDocument) {
+			return node.ownerDocument;
+		}
+		else {
+			return null;
+		}
+	}
 	
+	/**
+	 * Initializes the parser context.
+	 */
 	this.setContext = function(node) {
-		this.inXHTMLMode = false;
+		this.inXHTMLMode = false;// handle node as HTML/HTML5
 		
 		this.langAttributes = [
 			{ namespaceURI: "http://www.w3.org/XML/1998/namespace", localName: "lang" },
@@ -929,22 +958,36 @@ function RDFaParser() {
 		};
 	};
 	
+	/**
+	 * Retrieves the language context for the given node.
+	 */
 	this.getInitialLanguage = function(node) {
-		var result = null;
+		var result, doc;
+		// try current
 		for (var i = 0, imax = this.langAttributes.length; i < imax; i++) {
 			result = node.getAttributeNS(this.langAttributes[i].namespaceURI, this.langAttributes[i].localName);
 			if (result) {
 				return result;
 			}
 		}
+		// try parent
 		if (node.parentNode && node.parentNode.nodeType != Node.DOCUMENT_NODE) {
 			return this.getInitialLanguage(node.parentNode);
+		}
+		// try associated doc element
+		else if ((doc = this.getNodeDocument(node)) && doc.documentElement != node) {
+			return this.getInitialLanguage(doc.documentElement);
 		}
 		return null;
 	};
 	
+	/**
+	 * Sets the prefix/namespace context for the given node.
+	 */
 	this.setInitialPrefixes = function(node) {
-		for (var i = 0, imax = node.attributes.length; i < imax; i++) {
+		var doc, i;
+		// set current's
+		for (i = 0, imax = node.attributes.length; i < imax; i++) {
 			var attr = node.attributes[i];
 			if (attr.nodeName && attr.nodeName.match(/^xmlns\:/)) {
 				var prefix = attr.nodeName.substring(6);
@@ -953,11 +996,17 @@ function RDFaParser() {
 				}
 			}
 		}
+		// set parent's
 		if (node.parentNode && node.parentNode.nodeType != Node.DOCUMENT_NODE) {
 			this.setInitialPrefixes(node.parentNode);
 		}
+		// set doc's'
+		else if ((doc = this.getNodeDocument(node)) && doc.documentElement != node) {
+			this.setInitialPrefixes(doc.documentElement);
+		}
+		// set defaults
 		else {
-			for (var i in this.defaultPrefixes) {
+			for (i in this.defaultPrefixes) {
 				if (typeof this.prefixes[i] == "undefined") {
 					this.prefixes[i] = this.defaultPrefixes[i];
 				}
@@ -965,22 +1014,57 @@ function RDFaParser() {
 		}
 	};
 	
+	/**
+	 * Retrives the initial vocabulary context for the given node.
+	 */
 	this.getInitialVocabulary = function(node) {
-		var result = node.getAttribute("vocab");
-		if (result) {
+		var doc, result;
+		// try current
+		if ((result = node.getAttribute("vocab"))) {
 			return result;
 		}
+		// try parent
 		if (node.parentNode && node.parentNode.nodeType != Node.DOCUMENT_NODE) {
 			return this.getInitialVocabulary(node.parentNode);
+		}
+		// try doc
+		else if ((doc = this.getNodeDocument(node)) && doc.documentElement != node) {
+			return this.getInitialVocabulary(doc.documentElement);
 		}
 		return null;
 	};
 	
+	/**
+	 * Tries to make sure that node has a baseURI property.
+	 */
+	this.getNodeBase = function(node) {
+		// read-only property already set by browser
+		if (node.baseURI) return node.baseURI;
+		// try via doc property
+		var doc = this.getNodeDocument(node);
+		if (doc && doc.baseURI) {
+			return doc.baseURI;
+		}
+		// try via base tags in doc
+		var els;
+		if (doc && (els = doc.getElementsByTagName("base"))) {
+			return els[0].getAttribute("href");
+		}
+		// try window
+		if (window && window.location) {
+			return window.location.href;
+		}
+		return null;
+	};
+
+	/**
+	 * Calls the callback when a new triple is extracted.
+	 */
 	this.addTriple = function(origin,subject,predicate,object) {
 		var datatype = null;
 		var language = object.language || null;
 		if (object.type == this.PlainLiteralURI) {
-			datatype = this.prefixes['xsd'] + (language ? 'langString' : 'string');
+			datatype = language ? this.prefixes['rdf'] + 'langString' : this.prefixes['xsd'] + 'string';
 		}
 		else if (object.type == this.XMLLiteralURI) {
 			datatype = object.type;
