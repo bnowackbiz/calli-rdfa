@@ -8,7 +8,7 @@
 	<head>
 		<title>parser test</title>
 		<meta charset="utf-8"/>
-		<script type="text/javascript" src="../src/calli-rdfa.js"></script>
+		<script type="text/javascript" src="../src/RDFaParser.js"></script>
 	</head>
 	<body id="body">
 		<div id="foo" about="#foo">
@@ -27,25 +27,28 @@
 		<textarea id="debug" style="width: 90%; height: 400px"></textarea>
 		
 		<script>
-			//<!--
 			var debug = document.getElementById('debug');
 			
-			var parser = new RDFaParser();
-			parser.parse(document.getElementById('body'), function(s, p, o, dt, lang) {
+			var callback = function(s, p, o, dt, lang) {
 				debug.value += s + ' // ' + p + ' // ' + o + ' // ' + dt + ' // ' + lang + "\n";
 				console.log(this);
-			});
-			debug.value += "\n";
+			};
+			
+			var parser = new RDFaParser();
+			parser.parse(document.getElementById('body'), callback);
+			debug.value += "----\n";
 			
 			parser = new RDFaParser();
-			parser.setPrefix('calli', 'http://example.com/schema#');
-			parser.parse(document.getElementById('foo2'), function(s, p, o, dt, lang) {
-				debug.value += s + ' // ' + p + ' // ' + o + ' // ' + dt + ' // ' + lang + "\n";
-				console.log(this);
-			});
-			debug.value += "\n";
+			parser.setMapping('calli', 'http://example.com/schema#');
+			parser.parse(document.getElementById('foo2'), callback);
+			debug.value += "----\n";
 			
-			//-->
+			var parser = new RDFaParser();
+			var el = document.createElement('div');
+			el.innerHTML = '<a rel="calli:link" href="location.htm">a link</a>';
+			parser.parse(el, callback);
+			debug.value += "----\n";
+			
 		</script>
 	</body>
 	
