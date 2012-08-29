@@ -882,7 +882,7 @@ function RDFaParser() {
 	/**
 	 * Sets a single namespace and prefix
 	 */
-	this.setPrefix = function(prefix, namespace) {
+	this.setMapping = function(prefix, namespace) {
 		this.prefixes[prefix] = namespace;
 		return this;
 	};
