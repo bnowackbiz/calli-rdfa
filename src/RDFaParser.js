@@ -1,5 +1,5 @@
 /**
- * RDFaParser.js - A callback-based RDFa Parser for HTML documents and nodes *  
+ * RDFaParser.js - A callback-based RDFa Parser for HTML documents and nodes.
  * 
  * This class is based on Green Turtle by R. Alexander Milowski <alex@milowski.com>, Copyright (c) 2011-2012, https://code.google.com/p/green-turtle/
  * 
