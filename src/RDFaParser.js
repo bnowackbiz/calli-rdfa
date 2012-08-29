@@ -888,6 +888,13 @@ function RDFaParser() {
 	};
 	
 	/**
+	 * Returns the current prefix/namespace state
+	 */
+	this.getMappings = function() {
+		return this.prefixes;
+	};
+	
+	/**
 	 * Parses a DOM node for RDFa and calls the callback function for each triple
 	 */
 	this.parse = function(node, callback) {
@@ -985,7 +992,7 @@ function RDFaParser() {
 	 * Sets the prefix/namespace context for the given node.
 	 */
 	this.setInitialPrefixes = function(node) {
-		var doc, i;
+		var doc, i, imax;
 		// set current's
 		for (i = 0, imax = node.attributes.length; i < imax; i++) {
 			var attr = node.attributes[i];
