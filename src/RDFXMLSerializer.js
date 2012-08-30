@@ -142,16 +142,16 @@ function RDFXMLSerializer() {
 	
 	this.buildLiteral = function(value) {
 		// needs more work?
-		return value;
-	},
-	
-	this.buildXMLLiteral = function(value) {
-        // needs more work?
 		return value
             .replace(/\&/gm, '&amp;')
             .replace(/\</gm, '&lt;')
             .replace(/\>/gm, '&gt;')
         ; 
+	},
+	
+	this.buildXMLLiteral = function(value) {
+        // needs more work?
+		return value;
 	}
 	
 	this.addTriple= function(subject, predicate, object, datatype, language) {
