@@ -1,7 +1,7 @@
 /**
  * RDFaParser.js - A callback-based RDFa Parser for HTML documents and nodes.
  * 
- * This class is based on Green Turtle by R. Alexander Milowski <alex@milowski.com>, Copyright (c) 2011-2012, https://code.google.com/p/green-turtle/
+ * This class is a fork of Green Turtle by R. Alexander Milowski <alex@milowski.com>, Copyright (c) 2011-2012, https://code.google.com/p/green-turtle/
  * 
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
  * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
@@ -992,7 +992,7 @@ function RDFaParser() {
 	 * Sets the prefix/namespace context for the given node.
 	 */
 	this.setInitialPrefixes = function(node) {
-		var doc, i, imax;
+		var doc, i, imax, j;
 		// set current's
 		for (i = 0, imax = node.attributes.length; i < imax; i++) {
 			var attr = node.attributes[i];
@@ -1000,6 +1000,15 @@ function RDFaParser() {
 				var prefix = attr.nodeName.substring(6);
 				if (!this.prefixes[prefix]) {
 					this.prefixes[prefix] = this.trim(attr.value);
+				}
+			}
+			else if (attr.nodeName && attr.nodeName == "prefix") {
+				var defs = {};
+				this.parsePrefixMappings(attr.value, defs);
+				for (j in defs) {
+					if (!this.prefixes[j]) {
+						this.prefixes[j] = defs[j];
+					}
 				}
 			}
 		}

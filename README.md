@@ -1,8 +1,8 @@
 Calli-RDFa
 ==========
 
-* RDFaParser.js: A callback-based RDFa Parser for HTML documents and nodes, based on [Green Turtle](https://code.google.com/p/green-turtle/) by R. Alexander Milowski
-* RDFXMLSerializer: A simple RDF/XML Serializer based on the RDFa parser's callback.
+* RDFaParser.js: A callback-based RDFa Parser for HTML documents and nodes. A fork of [Green Turtle](https://code.google.com/p/green-turtle/) by R. Alexander Milowski
+* RDFXMLSerializer: A simple RDF/XML Serializer aligned with the RDFa parser's callback.
 
 Sample code
 -----------
@@ -37,10 +37,9 @@ Sample code
 
 Changes compared to Green Turtle's parser
 -----------------------------------------
-
-* the parser is started manually
-* in-memory indexes and the RDFa API were dropped, the parser works with an event-based addTriple-callback 
-* replaces node.baseURI with IE-compatible getNodeBase() method
+* The parser is started manually.
+* In-memory indexes and the RDFa API were dropped, the parser works with an event-based addTriple-callback .
+* Replaces node.baseURI with IE-compatible getNodeBase() method, so might work with IE9.
 
 
 Known Issues / Todos
