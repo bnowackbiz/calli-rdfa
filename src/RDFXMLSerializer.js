@@ -163,7 +163,14 @@ function RDFXMLSerializer() {
 		this.subjectBuffer[term].push(this.buildObject(predicate, object, datatype, language));
 	};
 	
-	this.toString = function() {
+	this.toString = function(triples) {
+		// add triples, if provided
+		if (triples) {
+			for (var i = 0, imax = triples.length; i < imax; i++) {
+				this.addTriple(triples[i].subject, triples[i].predicate, triples[i].object, triples[i].datatype, triples[i].language)
+			}
+		}
+		// generate doc
 		this.buildPrefix("http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 		var n = "\n";
 		var result = [];
