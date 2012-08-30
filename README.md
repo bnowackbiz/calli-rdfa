@@ -4,8 +4,8 @@ Calli-RDFa
 * RDFaParser.js: A callback-based RDFa Parser for HTML documents and nodes. A fork of [Green Turtle](https://code.google.com/p/green-turtle/) by R. Alexander Milowski
 * RDFXMLSerializer: A simple RDF/XML Serializer aligned with the RDFa parser's callback.
 
-Sample code
------------
+Parser sample code
+------------------
 
     var callback = function(subject, property, value, datatype, lang) {
 		var isBlankSubject = subject.indexOf('_:') == 0;
@@ -33,6 +33,37 @@ Sample code
 	el.innerHTML = '<a rel="ex:link" href="location.htm">a link</a>';
 	parser.parse(el, callback);
 
+Serializer sample code
+----------------------
+
+    var serializer = new RDFXMLSerializer();
+	var parser = new RDFaParser();
+
+	// on-the-fly serialization
+    var callback = function(s, p, o, dt, lang) {
+		// update the serializer's prefix mappings
+		serializer.setMappings(parser.getMappings());
+
+		// add incoming triples directly to the serializer
+		serializer.addTriple(s, p, o, dt, lang);
+	};
+
+	parser.parse(document, callback);
+	var rdfxml = serializer.toString();
+
+	// 2-step approach
+	var triples = [];
+    var callback = function(s, p, o, dt, lang) {
+		triples.push({s: s, p: p, o: o, dt: dt, lang: lang});
+	};
+
+	parser.parse(document, callback);
+	serializer.setMappings(parser.getMappings());
+	for (var i = 0, imax = triples.length, t; i < imax; i++) {
+		t = triples[i];
+		serializer.addTriple(t.s, t.p, t.o, t.dt, t.lang);
+	}
+	var rdfxml = serializer.toString();
 
 
 Changes compared to Green Turtle's parser
