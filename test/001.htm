@@ -9,6 +9,7 @@
 		<title>parser test</title>
 		<meta charset="utf-8"/>
 		<script type="text/javascript" src="../src/RDFaParser.js"></script>
+		<script type="text/javascript" src="../src/RDFXMLSerializer.js"></script>
 	</head>
 	<body id="body">
 		<div id="foo" about="#foo">
@@ -30,24 +31,36 @@
 			var debug = document.getElementById('debug');
 			
 			var callback = function(s, p, o, dt, lang) {
+				serializer.setMappings(parser.getMappings());
+				serializer.addTriple(s, p, o, dt, lang);
+				//debug.value += serializer.serialize(s, p, o, dt, lang);
 				debug.value += s + ' // ' + p + ' // ' + o + ' // ' + dt + ' // ' + lang + "\n";
 				console.log(this);
 			};
 			
+			var serializer = new RDFXMLSerializer();
 			var parser = new RDFaParser();
 			parser.parse(document.getElementById('body'), callback);
 			debug.value += "----\n";
+			debug.value += serializer.toString();
+			debug.value += "\n====\n";
 			
+			var serializer = new RDFXMLSerializer();
 			parser = new RDFaParser();
-			parser.setMapping('calli', 'http://example.com/schema#');
 			parser.parse(document.getElementById('foo2'), callback);
 			debug.value += "----\n";
+			debug.value += serializer.toString();
+			debug.value += "\n====\n";
 			
+			var serializer = new RDFXMLSerializer();
 			var parser = new RDFaParser();
 			var el = document.createElement('div');
-			el.innerHTML = '<a rel="calli:link" href="location.htm">a link</a>';
+			el.innerHTML = '<a rel="ex:link" href="location.htm">a link</a>';
+			parser.setMapping('ex', 'http://example.com/schema#');
 			parser.parse(el, callback);
 			debug.value += "----\n";
+			debug.value += serializer.toString();
+			debug.value += "\n====\n";
 			
 		</script>
 	</body>
