@@ -33,11 +33,11 @@
 			var callback = function(s, p, o, dt, lang) {
 				serializer.setMappings(parser.getMappings());
 				serializer.addTriple(s, p, o, dt, lang);
-				//debug.value += serializer.serialize(s, p, o, dt, lang);
 				debug.value += s + ' // ' + p + ' // ' + o + ' // ' + dt + ' // ' + lang + "\n";
 				console.log(this);
 			};
 			
+			// parse body
 			var serializer = new RDFXMLSerializer();
 			var parser = new RDFaParser();
 			parser.parse(document.getElementById('body'), callback);
@@ -45,15 +45,17 @@
 			debug.value += serializer.toString();
 			debug.value += "\n====\n";
 			
-			var serializer = new RDFXMLSerializer();
+			// parse node
+			serializer = new RDFXMLSerializer();
 			parser = new RDFaParser();
 			parser.parse(document.getElementById('foo2'), callback);
 			debug.value += "----\n";
 			debug.value += serializer.toString();
 			debug.value += "\n====\n";
 			
-			var serializer = new RDFXMLSerializer();
-			var parser = new RDFaParser();
+			// parse fragment
+			serializer = new RDFXMLSerializer();
+			parser = new RDFaParser();
 			var el = document.createElement('div');
 			el.innerHTML = '<a rel="ex:link" href="location.htm">a link</a>';
 			parser.setMapping('ex', 'http://example.com/schema#');
@@ -61,6 +63,24 @@
 			debug.value += "----\n";
 			debug.value += serializer.toString();
 			debug.value += "\n====\n";
+			
+			// parse+serialize in 2 steps
+			serializer = new RDFXMLSerializer();
+			parser = new RDFaParser();
+			var triples = [];
+			callback = function(s, p, o, dt, lang) {
+				triples.push({s: s, p: p, o: o, dt: dt, lang: lang});
+			};
+			parser.parse(document, callback);
+			serializer.setMappings(parser.getMappings());
+			for (var i = 0, imax = triples.length, t; i < imax; i++) {
+				t = triples[i];
+				serializer.addTriple(t.s, t.p, t.o, t.dt, t.lang);
+			}
+			debug.value += "----\n";
+			debug.value += serializer.toString();
+			debug.value += "\n====\n";
+			
 			
 		</script>
 	</body>
