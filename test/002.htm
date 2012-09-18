@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html 
+	xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:calli="http://callimachusproject.org/rdf/2009/framework#" 
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+	<head>
+		<title>parser test</title>
+		<meta charset="utf-8"/>
+		<script type="text/javascript" src="../src/RDFaParser.js"></script>
+		<script type="text/javascript" src="../src/RDFXMLSerializer.js"></script>
+	</head>
+	<body id="body">
+		
+		
+
+    <form id="form" data-var-resource="?this" enctype="application/sparql-update" action="" resource="http://localhost:8080/" method="POST">
+		<select data-construct="http://localhost:8080/callimachus/realm-edit.xhtml?construct&amp;element=theme&amp;resource={resource}" id="theme" rel="calli:theme" data-add="http://localhost:8080/callimachus/realm-edit.xhtml?element=theme&amp;realm=http://localhost:8080/" data-search="http://localhost:8080/callimachus/realm-edit.xhtml?search&amp;element=theme&amp;q={searchTerms}">
+			<option data-var-resource="?theme" data-typeof="calli:Theme" data-resource="http://localhost:8080/callimachus/theme/default" data-property="rdfs:label">Default Theme</option>
+			<option data-var-resource="?theme" property="rdfs:label" resource="http://localhost:8080/dev/canvas" selected="" typeof="calli:Theme">Canvas</option>
+		</select>
+    </form>
+	
+		
+		<hr style="width: 100%" />
+		<textarea id="debug" style="width: 90%; height: 400px"></textarea>
+		
+		<script>
+			var debug = document.getElementById('debug');
+			
+			var callback = function(s, p, o, dt, lang) {
+				serializer.setMappings(parser.getMappings());
+				serializer.addTriple(s, p, o, dt, lang);
+				debug.value += s + ' // ' + p + ' // ' + o + ' // ' + dt + ' // ' + lang + "\n";
+				console.log(this);
+			};
+			
+			// parse body
+			var serializer = new RDFXMLSerializer();
+			var parser = new RDFaParser();
+			parser.parse(document.getElementById('form'), callback);
+			debug.value += "----\n";
+			debug.value += serializer.toString();
+			debug.value += "\n====\n";
+						
+		</script>
+	</body>
+	
+</html>
