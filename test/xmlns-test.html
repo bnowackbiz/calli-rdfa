@@ -1,0 +1,30 @@
+<html
+	debug="true"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:foo="http://example.com/"
+	prefix="foaf: http://xmlns.com/foaf/0.1/ dc: http://purl.org/dc/terms/">
+	<head>
+		<title>My home-page</title>
+		<meta property="dc:creator" content="Mark Birbeck" />
+		<link rel="foaf:topic" href="http://www.example.com/#us" />
+		<script type="text/javascript" src="../lib/firebug-lite/build/firebug-lite.js#enableTrace"></script>
+	</head>
+	<body>
+		<textarea id="debug" style="width: 90%; height: 400px"></textarea>
+		
+		<script>
+			var el = document.getElementsByTagName('html')[0];
+			var debug = document.getElementById('debug');
+			for (var i = 0; i < el.attributes.length; i++) {
+				if (!el.attributes[i].nodeValue) continue;
+				debug.value += "\n\n" + el.attributes[i].nodeName + ' // ' + el.attributes[i].nodeValue;
+			}
+			if (document.namespaces) {
+				for (var i = 0; i < document.namespaces.length; i++) {
+					debug.value += "\n" + i + ' // ' + document.namespaces[i].name + ' // ' + document.namespaces[i].urn;
+					console.log(document.namespaces.item(i));
+				}
+			}
+		</script>
+	</body>
+</html>

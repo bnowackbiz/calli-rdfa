@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html 
+	xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:calli="http://callimachusproject.org/rdf/2009/framework#" 
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" 
+	xmlns:vcard="http://www.w3.org/2006/vcard/ns#" 
+	xmlns:directory="http://dir.w3.org/rdf/2012/directory/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+	<head>
+		<title>parser test</title>
+		<meta charset="utf-8"/>
+		<script type="text/javascript" src="../src/RDFaParser.js"></script>
+		<script type="text/javascript" src="../src/RDFXMLSerializer.js"></script>
+	</head>
+	<body id="body">
+		
+		
+
+<form id="form" typeof="vcard:Organization vcard:VCard" data-var-about="?this" enctype="application/sparql-update" about="http://localhost:8080/org/example+2+inc" method="POST">
+		<div class="hbox" style="overflow: hidden; ">
+			<div style="float: left; clear: none; margin-bottom: 0.5ex; ">
+				<input id="label" value="Example 2 Inc" type="hidden" data-expression-value="rdfs:label" property="rdfs:label" content="Example 2 Inc"/>
+				<input id="fn" value="Example 2 Inc" type="hidden" data-expression-value="vcard:fn" property="vcard:fn" content="Example 2 Inc"/>
+				<input id="name" value="Example 2 Inc" type="hidden" data-expression-value="vcard:organization-name" property="vcard:organization-name" content="Example 2 Inc"/>
+				<input id="legal" value="Example 2 Inc" required="required" data-expression-value="gr:legalName" onchange="updateLabel()" property="gr:legalName" content="Example 2 Inc" />
+
+				<div>
+					<label for="orgtype">Type of Organization</label>
+					<select rel="directory:isOrganizationType" data-add="http://localhost:8080/rdf/2012/directory/organization-edit.xhtml?element=orgtype&amp;realm=http://localhost:8080/" data-search="http://localhost:8080/rdf/2012/directory/organization-edit.xhtml?search&amp;element=orgtype&amp;q={searchTerms}">
+    			        <option about="http://localhost:8080/rdf/2012/directory/type-of-organization/commercial" data-var-about="?orgtype" property="skos:prefLabel" resource="http://localhost:8080/rdf/2012/directory/type-of-organization/" rev="calli:hasComponent" selected="">Commercial</option>
+					</select>
+				</div>
+
+				<div>
+					<label for="url">Web site URL</label>
+					<input id="url" style="width:52ex" value="http://example2.com" type="url" required="required" data-expression-value="vcard:url" property="vcard:url" content="http://example2.com"/>
+				</div>
+				<div class="hbox" style="overflow: hidden; ">
+					<div style="float: left; clear: none; margin-bottom: 0.5ex; ">
+						<label for="email">Email</label>
+						<input id="email" title="Preferred e-mail address for contact" value="" type="email" data-expression-value="vcard:workEmail"/>
+					</div>
+					<div style="float: left; clear: none; margin-bottom: 0.5ex; margin-left: 1em; ">
+						<label for="tel">Telephone</label>
+						<input id="tel" placeholder="+country code-area-number" value="" data-expression-value="vcard:workTel"/>
+					</div>
+				</div>
+    	        <label for="adr">Address <a title="Another Address" onclick="return calli.addResource(event,'#adr')" class="ui-icon ui-icon-plus" href="javascript:void(0)"></a></label>
+				<div id="adr" class="vbox" rel="vcard:adr" data-add="http://localhost:8080/rdf/2012/directory/organization-edit.xhtml?element=adr&amp;realm=http://localhost:8080/">
+					
+				<div typeof="vcard:Address" style="margin-bottom: 0.15em; display: table; ">
+						<div class="hbox" style="overflow: hidden; ">
+							<div class="vbox" style="float: left; clear: none; margin-bottom: 0.5ex; ">
+								<input data-expression-value="vcard:street-address" placeholder="street address" value="streez" style="margin-bottom: 0.15em; display: block; " property="vcard:street-address" content="streez"/>
+								<input data-expression-value="vcard:extended-address" placeholder="extended address" value="" style="margin-bottom: 0.15em; display: block; "/>
+								<input data-expression-value="vcard:post-office-box" placeholder="po box" value="" style="margin-bottom: 0.15em; display: block; "/>
+							</div>
+							<div class="vbox" style="float: left; clear: none; margin-bottom: 0.5ex; margin-left: 1em; ">
+								<input data-expression-value="vcard:locality" placeholder="city" value="" style="margin-bottom: 0.15em; display: block; "/>
+								<input data-expression-value="vcard:region" placeholder="state or province" value="" style="margin-bottom: 0.15em; display: block; "/>
+								<input data-expression-value="vcard:postal-code" placeholder="postal code" value="" style="margin-bottom: 0.15em; display: block; "/>
+								<input data-expression-value="vcard:country-name" type="hidden" value="" style="margin-bottom: 0.15em; display: block; "/>
+							</div>
+						</div>
+						<div>
+							<select onchange="$(this).parent().parent().children().children('div').find(':hidden').val(value).change()">
+								<option data-expression-value="vcard:country-name" data-text-expression="vcard:country-name" value=""></option>
+<option>Afghanistan</option>
+<option>Yemen</option>
+<option>Zambia</option>
+<option>Zimbabwe</option>
+							</select>
+						</div>
+    			        <a href="javascript:void(0)" title="Remove This Address" onclick="return calli.removeResource(event)" class="ui-icon ui-icon-close"></a>
+					</div></div>
+
+			</div>
+
+			</div>
+		</div>
+		<button id="submit" type="submit" class="">Submit</button>
+		<button id="cancel" onclick="location.replace('?view')" type="button">Cancel</button>
+		<button id="delete" onclick="calli.deleteResource(event)" type="button">Delete</button>
+	</form>	
+		
+		<hr style="width: 100%" />
+		<textarea id="debug" style="width: 90%; height: 400px"></textarea>
+		
+		<script>
+			var debug = document.getElementById('debug');
+			
+			var callback = function(s, p, o, dt, lang) {
+				serializer.setMappings(parser.getMappings());
+				serializer.addTriple(s, p, o, dt, lang);
+				debug.value += s + ' // ' + p + ' // ' + o + ' // ' + dt + ' // ' + lang + "\n";
+				console.log(this);
+			};
+			
+			// parse body
+			var serializer = new RDFXMLSerializer();
+			var parser = new RDFaParser();
+			parser.parse(document.getElementById('form'), callback);
+			debug.value += "----\n";
+			debug.value += serializer.toString();
+			debug.value += "\n====\n";
+						
+		</script>
+	</body>
+	
+</html>

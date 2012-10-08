@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+		"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"
+	debug="true"
+	prefix="foaf: http://xmlns.com/foaf/0.1/ dc: http://purl.org/dc/terms/">
+	<head>
+		<title>My home-page</title>
+		<meta property="dc:creator" content="Mark Birbeck" />
+		<link rel="foaf:topic" href="http://www.example.com/#us" />
+		<script type="text/javascript" src="../lib/firebug-lite/build/firebug-lite.js#enableTrace"></script>
+	</head>
+	<body xmlns:foo="http://example.com/">
+		<div id="div" foo:bar="baz"></div>
+		<textarea id="debug" style="width: 90%; height: 400px"></textarea>
+		
+		<script>
+			var debug = document.getElementById('debug');
+			var div = document.getElementById('div');
+			console.log(div);
+			debug.value += div.getAttributeNS('http://example.com/', 'bar');
+			console.log(div.getAttributeNodeNS('http://example.com/', 'bar'));
+			
+		</script>
+	</body>
+</html>

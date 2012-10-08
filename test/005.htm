@@ -1,0 +1,58 @@
+<html debug="true"
+	xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:calli="http://callimachusproject.org/rdf/2009/framework#" 
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" 
+	prefix="vcard: http://www.w3.org/2006/vcard/ns#" 
+	xmlns:directory="http://dir.w3.org/rdf/2012/directory/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+	<head>
+		<title>parser test</title>
+		<meta charset="utf-8"/>
+		<script type="text/javascript" src="../lib/firebug-lite/build/firebug-lite.js#enableTrace"></script>
+		<script type="text/javascript" src="../src/RDFaParser.js"></script>
+		<script type="text/javascript" src="../src/RDFXMLSerializer.js"></script>
+	</head>
+	<body id="body">
+		
+		
+
+<form id="form" data-var-resource="?this" enctype="application/sparql-update" action="" resource="http://localhost:8080/" method="POST">
+        <fieldset class="control-group">
+            <label for="rights-field" class="control-label">Rights Statement</label>
+            <div class="controls">
+                <textarea datatype="rdf:XMLLiteral" property="calli:rightsTextarea" content="<foo>baz</foo>"><foo>bar</foo></textarea>
+                <textarea datatype="rdf:XMLLiteral" property="calli:rightsTextareaNoContent"><foo>bar</foo></textarea>
+                <input datatype="rdf:XMLLiteral" property="calli:rightsInput" value="<foo>bar</foo>" />
+                <div datatype="rdf:XMLLiteral" property="calli:rightsDiv"><p>bar</p></div>
+				<span property="calli:testLang" lang="en-plain">this is en-plain</span>
+				<span property="calli:testXmlLang" xml:lang="en-xml" calli:test="foo">this is en-xml</span>
+            </div>
+        </fieldset>
+    </form>
+		
+		<hr style="width: 100%" />
+		<textarea id="debug" style="width: 90%; height: 400px"></textarea>
+		
+		<script type="text/javascript">
+			var debug = document.getElementById('debug');
+
+			var callback = function(s, p, o, dt, lang) {
+				serializer.setMappings(parser.getMappings());
+				serializer.addTriple(s, p, o, dt, lang);
+				debug.value += s + ' // ' + p + ' // ' + o + ' // ' + dt + ' // ' + lang + "\n";
+				console.log(this);
+				console.log(o)
+			};
+
+			// parse body
+			var serializer = new RDFXMLSerializer();
+			var parser = new RDFaParser();
+			parser.parse(document.getElementById('form'), callback);
+			debug.value += "----\n";
+			debug.value += serializer.toString().replace(/</, "<");
+			debug.value += "\n====\n";
+		</script>
+	</body>
+	
+</html>
