@@ -1216,6 +1216,6 @@ function RDFaParser() {
 		return value
 			.replace(/<(area|base|br|button|hr|img|input|link|meta)([^>]*)(|[^\/])>/g, '<$1$2$3/>')
 		;
-	}
+	};
 
 }
