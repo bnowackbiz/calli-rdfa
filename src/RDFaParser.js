@@ -9,6 +9,22 @@
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+var Node = typeof window !== 'undefined' && window.Node ? window.Node :
+{
+	ELEMENT_NODE: 1,
+	ATTRIBUTE_NODE: 2,
+	TEXT_NODE: 3,
+	CDATA_SECTION_NODE: 4,
+	ENTITY_REFERENCE_NODE: 5,
+	ENTITY_NODE: 6,
+	PROCESSING_INSTRUCTION_NODE: 7,
+	COMMENT_NODE: 8,
+	DOCUMENT_NODE: 9,
+	DOCUMENT_TYPE_NODE: 10,
+	DOCUMENT_FRAGMENT_NODE: 11,
+	NOTATION_NODE: 12
+}
+
 function RDFaParser() {
 
 	this.typeURI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
@@ -66,8 +82,8 @@ function RDFaParser() {
 		"schema": "http://schema.org/"
 	};
 
-	if (!window.Node) {// IE
-		window.Node = {
+	if (!Node) {// IE
+		Node = {
 			ELEMENT_NODE: 1,
 			ATTRIBUTE_NODE: 2,
 			TEXT_NODE: 3,
@@ -954,7 +970,7 @@ function RDFaParser() {
 			return true;
 		}
 		catch (e) {
-			if (window.console !== undefined && console.log) {
+			if (typeof console !== 'undefined' && console.log) {
 				console.log(e);
 				console.log(e.stack);
 			}
@@ -1057,7 +1073,7 @@ function RDFaParser() {
 			}
 		}
 		// ie8 and older can't read xmlns:prefix declarations on the html tag
-		if (document.namespaces && node.tagName.toLowerCase() == 'html') {
+		if (typeof document !== 'undefined' && document.namespaces && node.tagName.toLowerCase() == 'html') {
 			for (i = 0, imax = document.namespaces.length; i < imax; i++) {
 				prefix = document.namespaces[i].name;
 				if (!this.prefixes[prefix]) {
@@ -1120,8 +1136,8 @@ function RDFaParser() {
 			return els[0].getAttribute("href");
 		}
 		// try window
-		if (window && window.location) {
-			return window.location.href;
+		if (typeof window !== 'undefined' && typeof location !== 'undefined') {
+			return location.href;
 		}
 		return null;
 	};
@@ -1193,10 +1209,10 @@ function RDFaParser() {
 		// single node
 		var node = nodeOrNodeList;
 		if (!node || !node.nodeType) return '';// IE bug
-		if (window.XMLSerializer) {
+		if (typeof XMLSerializer !== 'undefined') {
 			return this.fixXMLLiteral((new XMLSerializer()).serializeToString(node));
 		}
-		else if (window.ActiveXObject) {// ie8 or older
+		else if (typeof ActiveXObject !== 'undefined') {// ie8 or older
 			if (node.nodeType == Node.ELEMENT_NODE) {
 				return this.toIEXMLNode(node).xml;
 			}
@@ -1220,7 +1236,7 @@ function RDFaParser() {
 
 }
 
-if(module)
+if(typeof module !== 'undefined')
 {
 	module.exports = RDFaParser;
 }
