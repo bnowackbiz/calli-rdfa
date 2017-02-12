@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/uniquely-io/calli-rdfa.git"
+    "url": "git+https://github.com/bnowackbiz/calli-rdfa.git"
   },
   "keywords": [
     "RDFa"
@@ -19,7 +19,7 @@
   "author": "Benjamin Nowack",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/uniquely-io/calli-rdfa/issues"
+    "url": "https://github.com/bnowackbiz/calli-rdfa/issues"
   },
-  "homepage": "https://github.com/uniquely-io/calli-rdfa#readme"
+  "homepage": "https://github.com/bnowackbiz/calli-rdfa#readme"
 }
