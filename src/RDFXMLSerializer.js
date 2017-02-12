@@ -199,7 +199,7 @@ function RDFXMLSerializer() {
 
 }
 
-if(module)
+if(typeof module !== 'undefined')
 {
 	module.exports = RDFXMLSerializer;
 }
