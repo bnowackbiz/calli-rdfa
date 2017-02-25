@@ -1,0 +1,25 @@
+{
+  "name": "calli-rdfa",
+  "version": "1.0.0",
+  "description": "Lightweight JavaScript RDFa library / Fork of the Green Turtle library",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bnowackbiz/calli-rdfa.git"
+  },
+  "keywords": [
+    "RDFa"
+  ],
+  "author": "Benjamin Nowack",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bnowackbiz/calli-rdfa/issues"
+  },
+  "homepage": "https://github.com/bnowackbiz/calli-rdfa#readme"
+}

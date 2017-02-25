@@ -1,13 +1,13 @@
 /**
- * RDFXMLSerializer.js - A basic RDF/XML Serializer  
+ * RDFXMLSerializer.js - A basic RDF/XML Serializer
  */
 
 function RDFXMLSerializer() {
-	
-	this.XMLLiteralURI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral"; 
+
+	this.XMLLiteralURI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral";
 	this.StringURI = "http://www.w3.org/2001/XMLSchema#string";
-	this.LangStringURI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"; 
-	
+	this.LangStringURI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString";
+
 	this.prefixes = {
 		"": "http://www.w3.org/1999/xhtml/vocab#",
 		// w3c
@@ -53,9 +53,9 @@ function RDFXMLSerializer() {
 
 	this.subjectBuffer = {};
 	this.prefixBuffer = {};
-	
+
 	this.prefixId = 0;
-	
+
 	/**
 	 * Sets a single namespace and prefix
 	 */
@@ -63,7 +63,7 @@ function RDFXMLSerializer() {
 		this.prefixes[prefix] = namespace;
 		return this;
 	};
-	
+
 	/**
 	 * Sets the prefix mappings
 	 */
@@ -79,7 +79,7 @@ function RDFXMLSerializer() {
 			}
 		}
 	};
-	
+
 	this.buildPName= function(uri) {
 		var m = uri.match(/^(.+[\/\#]+)([^/\#]+)$/);
 		if (!m) {
@@ -87,7 +87,7 @@ function RDFXMLSerializer() {
 		}
 		return this.buildPrefix(m[1]) + ':' + m[2];
 	}
-	
+
 	this.buildPrefix = function(namespace) {
 		var result = null;
 		for (var prefix in this.prefixes) {
@@ -106,15 +106,15 @@ function RDFXMLSerializer() {
 		this.prefixBuffer[result] = ' xmlns:' + result + '="' + namespace + '"';
 		return result;
 	};
-	
+
 	this.buildBnode = function(id) {
 		return 'rdf:nodeID="bn' + id.substring(2) + '"';
 	};
-	
+
 	this.buildUri = function(uri, pname) {
 		return pname + '="' + uri.replace(/\&/gm, '&amp;') + '"';
 	},
-	
+
 	this.buildObject = function(predicate, object, datatype, language) {
 		var pTerm = this.buildPName(predicate);
 		var oTerm;
@@ -139,21 +139,21 @@ function RDFXMLSerializer() {
 			return '<' + pTerm + ' rdf:datatype="' + datatype + '">' + oTerm + '</' + pTerm + '>';
 		}
 	};
-	
+
 	this.buildLiteral = function(value) {
 		// needs more work?
 		return value
             .replace(/\&/gm, '&amp;')
             .replace(/\</gm, '&lt;')
             .replace(/\>/gm, '&gt;')
-        ; 
+        ;
 	},
-	
+
 	this.buildXMLLiteral = function(value) {
         // needs more work?
 		return value;
 	}
-	
+
 	this.addTriple= function(subject, predicate, object, datatype, language) {
 		var term = (subject.match(/^_:/)) ? this.buildBnode(subject) : this.buildUri(subject, "rdf:about");
 		if (!this.subjectBuffer[term]) {
@@ -162,7 +162,7 @@ function RDFXMLSerializer() {
 		this.subjectBuffer[term].push("\n		");
 		this.subjectBuffer[term].push(this.buildObject(predicate, object, datatype, language));
 	};
-	
+
 	this.toString = function(triples) {
 		// add triples, if provided
 		if (triples) {
@@ -196,5 +196,10 @@ function RDFXMLSerializer() {
 		result.push("</rdf:RDF>");
 		return result.join("");
 	};
-	
+
+}
+
+if(typeof module !== 'undefined')
+{
+	module.exports = RDFXMLSerializer;
 }
